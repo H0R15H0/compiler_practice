@@ -1,0 +1,48 @@
+スクリプトは 2021年12月02日 13時26分01秒
+ に開始しました]0;vc1122633@ssh1:~/csex3/kadai_01[?1034h[vc1122633:~/csex3/kadai_01] python compiler.py lextest.txt 
+Line |Token name |Value
+    2|IDENT      |Kadai
+    3|NUMBER     |1
+    4|BEGIN      |begin
+    5|DIV        |div
+    6|DO         |do
+    7|IDENT      |else
+    8|IDENT      |end
+    9|IDENT      |for
+   10|IDENT      |function
+   11|IDENT      |if
+   12|IDENT      |procedure
+   13|IDENT      |program
+   14|IDENT      |read
+   15|IDENT      |then
+   16|IDENT      |to
+   17|IDENT      |var
+   18|IDENT      |while
+   19|WRITE      |write
+   20|PLUS       |+
+   21|MINUS      |-
+   22|MULT       |*
+不正な文字「 = 」
+不正な文字「 < 」
+不正な文字「 > 」
+不正な文字「 < 」
+不正な文字「 < 」
+不正な文字「 = 」
+不正な文字「 > 」
+不正な文字「 > 」
+不正な文字「 = 」
+不正な文字「 ( 」
+不正な文字「 ) 」
+不正な文字「 [ 」
+不正な文字「 ] 」
+不正な文字「 , 」
+不正な文字「 ; 」
+不正な文字「 . 」
+不正な文字「 . 」
+不正な文字「 . 」
+   37|ASSIGN     |:=
+]0;vc1122633@ssh1:~/csex3/kadai_01[vc1122633:~/csex3/kadai_01] ezit[K[K[Kxit
+exit
+
+スクリプトは 2021年12月02日 13時26分32秒
+ に終了しました
