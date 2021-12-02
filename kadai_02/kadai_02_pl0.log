@@ -1,0 +1,90 @@
+スクリプトは 2021年12月02日 14時17分45秒
+ に開始しました]0;vc1122633@ssh1:~/csex3/kadai_02[?1034h[vc1122633:~/csex3/kadai_02] exitpython compiler.py lextest.txt [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cexit[Kpython compiler.py lextest.txt [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cexit[K[Kpython ploa.p
+python3: can't open file 'ploa.p': [Errno 2] No such file or directory
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] python ploa.p[1Pa.p0a.p
+  File "pl0a.p", line 1
+    program PL0A;
+               ^
+SyntaxError: invalid syntax
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] [K[vc1122633:~/csex3/kadai_02] [K[vc1122633:~/csex3/kadai_02] python pl0a.p
+  File "pl0a.p", line 1
+    program PL0A;
+               ^
+SyntaxError: invalid syntax
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] python pl0a.pcpl0a.popl0a.pmpl0a.p[Cpl0a.pipl0a.plpl0a.pepl0a.prpl0a.p.pl0a.p[Cpl0a.pypl0a.p pl0a.p
+WARNING: Token 'FUNCTION' defined, but not used
+WARNING: Token 'INTERVAL' defined, but not used
+WARNING: Token 'LBRACKET' defined, but not used
+WARNING: Token 'RBRACKET' defined, but not used
+WARNING: There are 4 unused tokens
+Generating LALR tables
+WARNING: 1 shift/reduce conflict
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] python compiler.py pl0a.p[1P.pb.p
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] [K[vc1122633:~/csex3/kadai_02] rm parsetab.py 
+rm: 通常ファイル `parsetab.py' を削除しますか? y
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] 
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] 
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] 
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] 
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] 
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] rm parsetab.py python compiler.py pl0b.p
+WARNING: Token 'FUNCTION' defined, but not used
+WARNING: Token 'INTERVAL' defined, but not used
+WARNING: Token 'LBRACKET' defined, but not used
+WARNING: Token 'RBRACKET' defined, but not used
+WARNING: There are 4 unused tokens
+Generating LALR tables
+WARNING: 1 shift/reduce conflict
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] 
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] 
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] 
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] 
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] 
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] python compiler.py pl0b.p[10Prm parsetab.py 
+rm: 通常ファイル `parsetab.py' を削除しますか? y
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] 
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] 
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] 
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] 
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] 
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] rm parsetab.py python compiler.py pl0b.p[1P.pc.p
+WARNING: Token 'FUNCTION' defined, but not used
+WARNING: Token 'INTERVAL' defined, but not used
+WARNING: Token 'LBRACKET' defined, but not used
+WARNING: Token 'RBRACKET' defined, but not used
+WARNING: There are 4 unused tokens
+Generating LALR tables
+WARNING: 1 shift/reduce conflict
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] 
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] 
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] 
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] 
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] 
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] 
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] 
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] python compiler.py pl0c.p[10Prm parsetab.py 
+rm: 通常ファイル `parsetab.py' を削除しますか? y
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] 
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] 
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] 
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] 
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] rm parsetab.py [K[Kpython compiler.py pl0c.p[K[K[K[K[K[Kerror1.p 
+WARNING: Token 'FUNCTION' defined, but not used
+WARNING: Token 'INTERVAL' defined, but not used
+WARNING: Token 'LBRACKET' defined, but not used
+WARNING: Token 'RBRACKET' defined, but not used
+WARNING: There are 4 unused tokens
+Generating LALR tables
+WARNING: 1 shift/reduce conflict
+    RPAREN|)                   |8
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] 
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] 
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] 
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] 
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] 
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] 
+]0;vc1122633@ssh1:~/csex3/kadai_02[vc1122633:~/csex3/kadai_02] exit
+exit
+
+スクリプトは 2021年12月02日 14時23分42秒
+ に終了しました
