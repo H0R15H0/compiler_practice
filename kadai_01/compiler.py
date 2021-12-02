@@ -20,7 +20,18 @@ reserved = {
     'begin': 'BEGIN',
     'div': 'DIV',
     'do': 'DO',
-
+    'else': 'ELSE',
+    'end': 'END',
+    'for': 'FOR',
+    'function': 'FUNCTION',
+    'if': 'IF',
+    'procedure': 'PROCEDURE',
+    'program': 'PROGRAM',
+    'read': 'READ',
+    'then': 'THEN',
+    'to': 'TO',
+    'var': 'VAR',
+    'while': 'WHILE',
     'write': 'WRITE'
 }
 
@@ -28,7 +39,20 @@ reserved = {
 t_PLUS  = '\+'
 t_MINUS = '-'
 t_MULT  = '\*'
-
+t_EQ = '='
+t_NEQ = '<>'
+t_LT = '<'
+t_LE = '<='
+t_GT = '>'
+t_GE = '>='
+t_LPAREN = '\('
+t_RPAREN = '\)'
+t_LBRACKET = '\['
+t_RBRACKET = '\]'
+t_COMMA = ','
+t_SEMICOLON = ';'
+t_PERIOD = '\.'
+t_INTERVAL = '\.\.'
 t_ASSIGN = ':='
 
 # コメントおよび空白・タブを無視するルール

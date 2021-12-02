@@ -1,0 +1,54 @@
+スクリプトは 2021年12月02日 13時54分16秒
+ に開始しました]0;vc1122633@ssh1:~/csex3/kadai_01[?1034h[vc1122633:~/csex3/kadai_01] exitpython compiler.py lextest.txt [C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[C[Cexit[Kpython compiler.py lextest.txt 
+ERROR: Invalid regular expression for rule 't_LPAREN'. missing ), unterminated subpattern at position 0
+ERROR: Invalid regular expression for rule 't_RPAREN'. unbalanced parenthesis at position 14
+ERROR: Invalid regular expression for rule 't_LBRACKET'. unterminated character set at position 15
+Traceback (most recent call last):
+  File "compiler.py", line 91, in <module>
+    lexer = lex.lex(debug=0)
+  File "/mdhome/home3/vc1122633/.local/lib/python3.6/site-packages/ply/lex.py", line 909, in lex
+    raise SyntaxError("Can't build lexer")
+SyntaxError: Can't build lexer
+]0;vc1122633@ssh1:~/csex3/kadai_01[vc1122633:~/csex3/kadai_01] python compiler.py lextest.txt 
+Line |Token name |Value
+    2|IDENT      |Kadai
+    3|NUMBER     |1
+    4|BEGIN      |begin
+    5|DIV        |div
+    6|DO         |do
+    7|ELSE       |else
+    8|END        |end
+    9|FOR        |for
+   10|FUNCTION   |function
+   11|IF         |if
+   12|PROCEDURE  |procedure
+   13|PROGRAM    |program
+   14|READ       |read
+   15|THEN       |then
+   16|TO         |to
+   17|VAR        |var
+   18|WHILE      |while
+   19|WRITE      |write
+   20|PLUS       |+
+   21|MINUS      |-
+   22|MULT       |*
+   23|EQ         |=
+   24|NEQ        |<>
+   25|LT         |<
+   26|LE         |<=
+   27|GT         |>
+   28|GE         |>=
+   29|LPAREN     |(
+   30|RPAREN     |)
+   31|LBRACKET   |[
+   32|RBRACKET   |]
+   33|COMMA      |,
+   34|SEMICOLON  |;
+   35|PERIOD     |.
+   36|INTERVAL   |..
+   37|ASSIGN     |:=
+]0;vc1122633@ssh1:~/csex3/kadai_01[vc1122633:~/csex3/kadai_01] exit
+exit
+
+スクリプトは 2021年12月02日 13時56分01秒
+ に終了しました
