@@ -1,0 +1,14 @@
+スクリプトは 2021年12月02日 13時24分32秒
+ に開始しました]0;vc1122633@ssh1:~/csex3/kadai_01[?1034h[vc1122633:~/csex3/kadai_01] pip install --user ply
+Collecting ply
+[?25l  Downloading https://files.pythonhosted.org/packages/a3/58/35da89ee790598a0700ea49b2a66594140f44dec458c07e8e3d4979137fc/ply-3.11-py2.py3-none-any.whl (49kB)
+[K     |██████▋                         | 10kB 14.0MB/s eta 0:00:01[K     |█████████████▏                  | 20kB 10.4MB/s eta 0:00:01[K     |███████████████████▉            | 30kB 8.8MB/s eta 0:00:01[K     |██████████████████████████▍     | 40kB 7.5MB/s eta 0:00:01[K     |████████████████████████████████| 51kB 1.9MB/s 
+[?25hInstalling collected packages: ply
+Successfully installed ply-3.11
+[33mWARNING: You are using pip version 19.2.2, however version 21.3.1 is available.
+You should consider upgrading via the 'pip install --upgrade pip' command.[0m
+]0;vc1122633@ssh1:~/csex3/kadai_01[vc1122633:~/csex3/kadai_01] exit
+exit
+
+スクリプトは 2021年12月02日 13時25分00秒
+ に終了しました
