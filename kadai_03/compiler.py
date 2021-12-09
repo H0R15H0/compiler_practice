@@ -23,7 +23,18 @@ reserved = {
     'begin': 'BEGIN',
     'div': 'DIV',
     'do': 'DO',
-
+    'else': 'ELSE',
+    'end': 'END',
+    'for': 'FOR',
+    'function': 'FUNCTION',
+    'if': 'IF',
+    'procedure': 'PROCEDURE',
+    'program': 'PROGRAM',
+    'read': 'READ',
+    'then': 'THEN',
+    'to': 'TO',
+    'var': 'VAR',
+    'while': 'WHILE',
     'write': 'WRITE'
 }
 
@@ -31,7 +42,20 @@ reserved = {
 t_PLUS  = '\+'
 t_MINUS = '-'
 t_MULT  = '\*'
-
+t_EQ = '='
+t_NEQ = '<>'
+t_LT = '<'
+t_LE = '<='
+t_GT = '>'
+t_GE = '>='
+t_LPAREN = '\('
+t_RPAREN = '\)'
+t_LBRACKET = '\['
+t_RBRACKET = '\]'
+t_COMMA = ','
+t_SEMICOLON = ';'
+t_PERIOD = '\.'
+t_INTERVAL = '\.\.'
 t_ASSIGN = ':='
 
 # コメントおよび空白・タブを無視するルール
@@ -70,7 +94,7 @@ def t_error(t):
 # 解析に必要な変数を宣言しておく
 #################################################################
 
-symtable = SymbolTable()
+sym_table = SymbolTable()
 varscope = Scope.GLOBAL_VAR
 
 #################################################################
@@ -79,12 +103,12 @@ varscope = Scope.GLOBAL_VAR
 
 def p_program(p):
     '''
-    program : PROGRAM IDENT SEMICOLON outblock PERIOD
+    program : PROGRAM IDENT act_insert_prev_var_ident SEMICOLON outblock PERIOD
     '''
 
 def p_outblock(p):
     '''
-    outblock : var_decl_part subprog_decl_part statement
+    outblock : var_decl_part act_set_varscope_local subprog_decl_part act_set_varscope_global statement
     '''
 
 def p_var_decl_part(p):
@@ -93,6 +117,211 @@ def p_var_decl_part(p):
                   |
     '''
 
+def p_var_decl_list(p):
+    '''
+    var_decl_list : var_decl_list SEMICOLON var_decl
+        | var_decl
+    '''
+
+def p_var_decl(p):
+    '''
+    var_decl : VAR id_list
+    '''
+
+def p_subprog_decl_part(p):
+    '''
+    subprog_decl_part : subprog_decl_list SEMICOLON
+        | 
+    '''
+
+def p_subprog_decl_list(p):
+    '''
+    subprog_decl_list : subprog_decl_list SEMICOLON subprog_decl
+        | subprog_decl
+    '''
+
+def p_subprog_decl(p):
+    '''
+    subprog_decl : proc_decl
+    '''
+
+def p_proc_decl(p):
+    '''
+    proc_decl : PROCEDURE proc_name SEMICOLON inblock
+    '''
+
+def p_proc_name(p):
+    '''
+    proc_name : IDENT act_insert_prev_proc_ident
+    '''
+
+def p_inblock(p):
+    '''
+    inblock : var_decl_part statement
+    '''
+
+def p_statement_list(p):
+    '''
+    statement_list : statement_list SEMICOLON statement
+        | statement
+    '''
+
+def p_statement(p):
+    '''
+    statement : assignment_statement
+        | if_statement
+        | while_statement
+        | for_statement
+        | proc_call_statement
+        | null_statement
+        | block_statement
+        | read_statement
+        | write_statement
+    '''
+
+def p_assignment_statement(p):
+    '''
+    assignment_statement : IDENT act_lookup ASSIGN expression
+    '''
+
+def p_if_statement(p):
+    '''
+    if_statement : IF condition THEN statement else_statement
+    '''
+
+def p_else_statement(p):
+    '''
+    else_statement : ELSE statement
+        | 
+    '''
+
+def p_while_statement(p):
+    '''
+    while_statement : WHILE condition DO statement
+    '''
+
+def p_for_statement(p):
+    '''
+    for_statement : FOR IDENT act_lookup ASSIGN expression TO expression DO statement
+    '''
+
+def p_proc_call_statement(p):
+    '''
+    proc_call_statement : proc_call_name
+    '''
+
+def p_proc_call_name(p):
+    '''
+    proc_call_name : IDENT act_lookup
+    '''
+
+def p_block_statement(p):
+    '''
+    block_statement : BEGIN statement_list END
+    '''
+
+def p_read_statement(p):
+    '''
+    read_statement : READ LPAREN IDENT act_lookup RPAREN
+    '''
+
+def p_write_statement(p):
+    '''
+    write_statement : WRITE LPAREN expression RPAREN
+    '''
+
+def p_null_statement(p):
+    '''
+    null_statement : 
+    '''
+
+def p_condition(p):
+    '''
+    condition : expression EQ expression
+        | expression NEQ expression
+        | expression LT expression
+        | expression LE expression
+        | expression GT expression
+        | expression GE expression
+    '''
+
+def p_expression(p):
+    '''
+    expression : term
+        | MINUS term
+        | expression PLUS term
+        | expression MINUS term
+    '''
+
+def p_term(p):
+    '''
+    term : f_actor
+        | term MULT f_actor
+        | term DIV f_actor
+    '''
+
+def p_f_actor(p):
+    '''
+    f_actor : var_name
+        | number
+        | LPAREN expression RPAREN
+    '''
+
+def p_var_name(p):
+    '''
+    var_name : IDENT act_lookup
+    '''
+
+def p_number(p):
+    '''
+    number : NUMBER
+    '''
+
+def p_id_list(p):
+    '''
+    id_list : IDENT act_insert_prev_var_ident
+        | id_list COMMA IDENT act_insert_prev_var_ident
+    '''
+
+def p_act_insert_prev_var_ident(p):
+    '''
+    act_insert_prev_var_ident :
+    '''
+    sym = Symbol(p[-1], varscope)
+    sym_table.insert(sym)
+
+def p_act_insert_prev_proc_ident(p):
+    '''
+    act_insert_prev_proc_ident :
+    '''
+    sym = Symbol(p[-1], Scope.PROC)
+    sym_table.insert(sym)
+
+def p_act_lookup(p):
+    '''
+    act_lookup :
+    '''
+    sym = sym_table.lookup(p[-1])
+
+def p_act_set_varscope_local(p):
+    '''
+    act_set_varscope_local :
+    '''
+    global varscope
+    varscope = Scope.LOCAL_VAR
+
+def p_act_set_varscope_global(p):
+    '''
+    act_set_varscope_global : act_delete_local_ident
+    '''
+    global varscope
+    varscope = Scope.GLOBAL_VAR
+
+def p_act_delete_local_ident(p):
+    '''
+    act_delete_local_ident :
+    '''
+    sym_table.delete()
 
 #################################################################
 # 構文解析エラー時の処理
@@ -101,7 +330,7 @@ def p_var_decl_part(p):
 def p_error(p):
     if p:
         # p.type, p.value, p.linenoを使ってエラーの処理を書く
-
+        print(f"Syntax error: invalid syntax {p.value} type {p.type} at line {p.lineno}")
     else:
         print("Syntax error at EOF")
 
