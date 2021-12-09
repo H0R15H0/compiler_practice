@@ -103,7 +103,7 @@ varscope = Scope.GLOBAL_VAR
 
 def p_program(p):
     '''
-    program : PROGRAM IDENT act_insert_prev_var_ident SEMICOLON outblock PERIOD
+    program : PROGRAM IDENT SEMICOLON outblock PERIOD
     '''
 
 def p_outblock(p):
