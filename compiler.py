@@ -6,6 +6,8 @@ import sys
 import ply.lex as lex
 import ply.yacc as yacc
 
+from symtab import Scope, Symbol, SymbolTable
+
 ## トークン名のリスト
 tokens = (
     'BEGIN', 'DIV', 'DO', 'ELSE', 'END', 'FOR', 'FUNCTION', 'IF',
@@ -87,6 +89,13 @@ def t_error(t):
     print("不正な文字「", t.value[0], "」")
     t.lexer.skip(1)
 
+
+#################################################################
+# 解析に必要な変数を宣言しておく
+#################################################################
+
+symtable = SymbolTable()
+varscope = Scope.GLOBAL_VAR
 
 #################################################################
 # ここから先に構文規則を書く
