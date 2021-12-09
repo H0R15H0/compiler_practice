@@ -94,7 +94,7 @@ def t_error(t):
 # 解析に必要な変数を宣言しておく
 #################################################################
 
-symtable = SymbolTable()
+sym_table = SymbolTable()
 varscope = Scope.GLOBAL_VAR
 
 #################################################################
@@ -103,12 +103,12 @@ varscope = Scope.GLOBAL_VAR
 
 def p_program(p):
     '''
-    program : PROGRAM IDENT SEMICOLON outblock PERIOD
+    program : PROGRAM IDENT act_insert_prev_var_ident SEMICOLON outblock PERIOD
     '''
 
 def p_outblock(p):
     '''
-    outblock : var_decl_part subprog_decl_part statement
+    outblock : var_decl_part act_set_varscope_local subprog_decl_part act_set_varscope_global statement
     '''
 
 def p_var_decl_part(p):
@@ -152,7 +152,7 @@ def p_proc_decl(p):
 
 def p_proc_name(p):
     '''
-    proc_name : IDENT
+    proc_name : IDENT act_insert_prev_proc_ident
     '''
 
 def p_inblock(p):
@@ -181,7 +181,7 @@ def p_statement(p):
 
 def p_assignment_statement(p):
     '''
-    assignment_statement : IDENT ASSIGN expression
+    assignment_statement : IDENT act_lookup ASSIGN expression
     '''
 
 def p_if_statement(p):
@@ -202,7 +202,7 @@ def p_while_statement(p):
 
 def p_for_statement(p):
     '''
-    for_statement : FOR IDENT ASSIGN expression TO expression DO statement
+    for_statement : FOR IDENT act_lookup ASSIGN expression TO expression DO statement
     '''
 
 def p_proc_call_statement(p):
@@ -212,7 +212,7 @@ def p_proc_call_statement(p):
 
 def p_proc_call_name(p):
     '''
-    proc_call_name : IDENT
+    proc_call_name : IDENT act_lookup
     '''
 
 def p_block_statement(p):
@@ -222,7 +222,7 @@ def p_block_statement(p):
 
 def p_read_statement(p):
     '''
-    read_statement : READ LPAREN IDENT RPAREN
+    read_statement : READ LPAREN IDENT act_lookup RPAREN
     '''
 
 def p_write_statement(p):
@@ -269,7 +269,7 @@ def p_f_actor(p):
 
 def p_var_name(p):
     '''
-    var_name : IDENT
+    var_name : IDENT act_lookup
     '''
 
 def p_number(p):
@@ -279,11 +279,49 @@ def p_number(p):
 
 def p_id_list(p):
     '''
-    id_list : IDENT
-        | id_list COMMA IDENT
+    id_list : IDENT act_insert_prev_var_ident
+        | id_list COMMA IDENT act_insert_prev_var_ident
     '''
 
+def p_act_insert_prev_var_ident(p):
+    '''
+    act_insert_prev_var_ident :
+    '''
+    sym = Symbol(p[-1], varscope)
+    sym_table.insert(sym)
 
+def p_act_insert_prev_proc_ident(p):
+    '''
+    act_insert_prev_proc_ident :
+    '''
+    sym = Symbol(p[-1], Scope.PROC)
+    sym_table.insert(sym)
+
+def p_act_lookup(p):
+    '''
+    act_lookup :
+    '''
+    sym = sym_table.lookup(p[-1])
+
+def p_act_set_varscope_local(p):
+    '''
+    act_set_varscope_local :
+    '''
+    global varscope
+    varscope = Scope.LOCAL_VAR
+
+def p_act_set_varscope_global(p):
+    '''
+    act_set_varscope_global : act_delete_local_ident
+    '''
+    global varscope
+    varscope = Scope.GLOBAL_VAR
+
+def p_act_delete_local_ident(p):
+    '''
+    act_delete_local_ident :
+    '''
+    sym_table.delete()
 
 #################################################################
 # 構文解析エラー時の処理
