@@ -35,20 +35,29 @@ class SymbolTable(object):
     def __init__(self):
         self.rows = []
 
+    def __str__(self):
+        return f"[{', '.join([str(sym) for sym in self.rows])}]"
+
     def insert(self, symbol:Symbol):
         ''' 記号表への変数・手続きの登録 '''
+        print("-- insert --")
         self.rows.append(symbol)
+        print(self.rows)
 
 
     def lookup(self, name:str) -> Symbol:
+        print("-- lookup --")
         ''' 変数・手続きの検索 '''
         for symbol in self.rows[::-1]:
             if symbol.name == name:
+                print(symbol)
                 return symbol
 
     def delete(self):
         ''' 記号表から局所変数の削除 '''
+        print("-- delete --")
         self.rows = [symbol for symbol in self.rows if symbol.scope != Scope(1)]
+        print(self.rows)
 
 
 if __name__ == "__main__":
