@@ -224,7 +224,7 @@ def p_statement(p):
 
 def p_assignment_statement(p):
     '''
-    assignment_statement : IDENT act_lookup ASSIGN expression
+    assignment_statement : IDENT act_lookup_prev_ident ASSIGN expression
     '''
 
 def p_if_statement(p):
@@ -245,7 +245,7 @@ def p_while_statement(p):
 
 def p_for_statement(p):
     '''
-    for_statement : FOR IDENT act_lookup ASSIGN expression TO expression DO statement
+    for_statement : FOR IDENT act_lookup_prev_ident ASSIGN expression TO expression DO statement
     '''
 
 def p_proc_call_statement(p):
@@ -255,7 +255,7 @@ def p_proc_call_statement(p):
 
 def p_proc_call_name(p):
     '''
-    proc_call_name : IDENT act_lookup
+    proc_call_name : IDENT act_lookup_prev_ident
     '''
 
 def p_block_statement(p):
@@ -265,7 +265,7 @@ def p_block_statement(p):
 
 def p_read_statement(p):
     '''
-    read_statement : READ LPAREN IDENT act_lookup RPAREN
+    read_statement : READ LPAREN IDENT act_lookup_prev_ident RPAREN
     '''
     global useRead
     useRead = True
@@ -339,7 +339,7 @@ def p_f_actor(p):
 
 def p_var_name(p):
     '''
-    var_name : IDENT act_lookup
+    var_name : IDENT act_lookup_prev_ident
     '''
     t = p[2] # symtable.lookup(p[1])
     if t.scope == Scope.GLOBAL_VAR:
@@ -375,9 +375,9 @@ def p_act_insert_prev_proc_ident(p):
     sym = Symbol(p[-1], Scope.PROC)
     symtable.insert(sym)
 
-def p_act_lookup(p):
+def p_act_lookup_prev_ident(p):
     '''
-    act_lookup :
+    act_lookup_prev_ident :
     '''
     sym = symtable.lookup(p[-1])
     p[0] = sym
