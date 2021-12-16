@@ -226,6 +226,7 @@ def p_assignment_statement(p):
     '''
     assignment_statement : IDENT act_lookup_prev_ident ASSIGN expression
     '''
+    addCode(LLVMCodeStore(p[4], p[2]))
 
 def p_if_statement(p):
     '''
@@ -309,6 +310,21 @@ def p_expression(p):
     '''
     if len(p) == 2:
         p[0] = p[1]
+    elif len(p) == 3:
+        arg1 = Operand(OType.CONSTANT, val=0)
+        arg2 = p[2]
+        retval = getRegister()
+        addCode(LLVMCodeSub(retval, arg1, arg2))
+        p[0] = retval
+    else:
+        arg1 = p[1]
+        arg2 = p[3]
+        retval = getRegister()
+        if p[2] == "+":
+            addCode(LLVMCodeAdd(retval, arg1, arg2))
+        elif p[2] == "-":
+            addCode(LLVMCodeSub(retval, arg1, arg2))
+        p[0] = retval
 
 def p_term(p):
     '''
@@ -324,6 +340,12 @@ def p_term(p):
             arg2 = p[3]
             retval = getRegister()
             addCode(LLVMCodeMul(retval, arg1, arg2))
+            p[0] = retval
+        elif p[2] == "div":
+            arg1 = p[1]
+            arg2 = p[3]
+            retval = getRegister()
+            addCode(LLVMCodeDiv(retval, arg1, arg2))
             p[0] = retval
 
 def p_f_actor(p):
