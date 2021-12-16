@@ -270,9 +270,9 @@ def p_read_statement(p):
     global useRead
     useRead = True
 
-    t = p[4] # symtable.lookup(p[3])
-    if t.scope == Scope.GLOBAL_VAR:
-        ptr = Operand(OType.GLOBAL_VAR, name=t.name)
+    ptr = p[4] # symtable.lookup(p[3])
+    # if t.scope == Scope.GLOBAL_VAR:
+    #     ptr = Operand(OType.GLOBAL_VAR, name=t.name)
 
     addCode(LLVMCodeCallScanf(getRegister(), ptr))
 
@@ -341,9 +341,9 @@ def p_var_name(p):
     '''
     var_name : IDENT act_lookup_prev_ident
     '''
-    t = p[2] # symtable.lookup(p[1])
-    if t.scope == Scope.GLOBAL_VAR:
-        ptr = Operand(OType.GLOBAL_VAR, name=t.name)
+    ptr = p[2] # symtable.lookup(p[1])
+    # if t.scope == Scope.GLOBAL_VAR:
+    #     ptr = Operand(OType.GLOBAL_VAR, name=t.name)
 
     retval = getRegister()
     addCode(LLVMCodeLoad(retval, ptr))
@@ -379,8 +379,10 @@ def p_act_lookup_prev_ident(p):
     '''
     act_lookup_prev_ident :
     '''
-    sym = symtable.lookup(p[-1])
-    p[0] = sym
+    t = symtable.lookup(p[-1])
+    if t.scope == Scope.GLOBAL_VAR:
+        ptr = Operand(OType.GLOBAL_VAR, name=t.name)
+    p[0] = ptr
 
 def p_act_set_varscope_local(p):
     '''
