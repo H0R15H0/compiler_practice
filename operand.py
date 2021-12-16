@@ -7,6 +7,7 @@ class OType(Enum):
     NAMED_REG    = 1    # 名前付きレジスタ（%m, %n など）
     NUMBERED_REG = 2    # 番号付きレジスタ（%1, %2 など）
     CONSTANT     = 3    # 定数
+    LABEL        = 4    # ラベル
 
 class Operand(object):
     '''
@@ -18,6 +19,8 @@ class Operand(object):
         self.type = type    # タイプ: OType
         self.name = name    # 名前: str
         self.val = val      # 番号/値: int
+        if self.val and self.type == OType.LABEL:
+            self.name = f'L{val}'
 
     def __str__(self):
         if self.type == OType.GLOBAL_VAR:
@@ -28,3 +31,5 @@ class Operand(object):
             return f"%{self.val}"
         elif self.type == OType.CONSTANT:
             return str(self.val)
+        elif self.type == OType.LABEL:
+            return f"%L{self.val}"

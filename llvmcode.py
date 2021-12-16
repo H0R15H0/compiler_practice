@@ -138,6 +138,51 @@ class LLVMCodeDiv(LLVMCode):
     def __str__(self):
         return f"{self.retval} = sdiv i32 {self.arg1}, {self.arg2}"
 
+class LLVMCodeCmp(LLVMCode):
+    ''' cmp 命令
+            {retval} = icmp {cmptype} i32 {arg1} {arg2}
+    '''
+
+    def __init__(self, retval:Operand, cmptype:CmpType, arg1:Operand, arg2:Operand):
+        super().__init__()
+        self.retval = retval
+        self.cmptype = cmptype
+        self.arg1 = arg1
+        self.arg2 = arg2
+
+    def __str__(self):
+        return f"{self.retval} = icmp {self.cmptype} i32 {self.arg1}, {self.arg2}"
+
+class LLVMCodeBr(LLVMCode):
+    ''' br 命令
+            br i1 {arg}, label {label1}, label {label2}
+            br label {label1}
+    '''
+
+    def __init__(self, label1:Operand, label2:Operand=None, arg:Operand=None):
+        super().__init__()
+        self.arg = arg
+        self.label1 = label1
+        self.label2 = label2
+
+    def __str__(self):
+        if self.label2:
+            return f"br i1 {self.arg}, label {self.label1}, label {self.label2}"
+        else:
+            return f"br label {self.label1}"
+
+class LLVMCodeLabel(LLVMCode):
+    ''' label
+            {arg}:
+    '''
+
+    def __init__(self, arg:Operand):
+        super().__init__()
+        self.arg = arg
+
+    def __str__(self):
+        return f"{self.arg.name}:"
+
 
 class LLVMCodeRet(LLVMCode):
     ''' ret 命令

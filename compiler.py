@@ -105,6 +105,10 @@ fundefs = []				# 生成した関数定義（Fundef）のリスト
 useWrite = False			# write関数が使用されているかのフラグ
 useRead  = False			# read関数が使用されているかのフラグ
 
+labelNum = 1                # ラベルの番号
+
+labels = []                 # ラベルの配列
+
 def addCode(l:LLVMCode):
     ''' 現在の関数定義オブジェクトの codes に命令 l を追加 '''
     fundefs[-1].codes.append(l)
@@ -230,8 +234,43 @@ def p_assignment_statement(p):
 
 def p_if_statement(p):
     '''
-    if_statement : IF condition THEN statement else_statement
+    if_statement : act_generate_labels IF condition act_insert_br THEN act_insert_label statement act_insert_jump act_insert_label else_statement act_insert_jump act_insert_label
     '''
+    labels.pop(-1)
+
+def p_act_generate_labels(p):
+    '''
+    act_generate_labels :
+    '''
+    global labelNum, labels
+    childLabels = []
+    for i in range(3):
+        childLabels.append(Operand(OType.LABEL, val=labelNum))
+        labelNum += 1
+    labels.append(childLabels)
+
+def p_act_insert_br(p):
+    '''
+    act_insert_br :
+    '''
+    chileLabels = labels[-1]
+    addCode(LLVMCodeBr(chileLabels[0], chileLabels[1], p[-1]))
+
+def p_act_insert_label(p):
+    '''
+    act_insert_label :
+    '''
+    label = labels[-1].pop(0)
+    addCode(LLVMCodeLabel(label))
+    p[0] = label
+
+def p_act_insert_jump(p):
+    '''
+    act_insert_jump :
+    '''
+    label = labels[-1][-1]
+    addCode(LLVMCodeBr(label))
+    p[0] = label
 
 def p_else_statement(p):
     '''
@@ -298,6 +337,10 @@ def p_condition(p):
         | expression GT expression
         | expression GE expression
     '''
+    cmptype = CmpType.getCmpType(p[2])
+    retval = getRegister()
+    addCode(LLVMCodeCmp(retval, cmptype, p[1], p[3]))
+    p[0] = retval
 
 def p_expression(p):
     '''
