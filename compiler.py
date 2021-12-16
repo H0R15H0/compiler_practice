@@ -7,6 +7,9 @@ import ply.lex as lex
 import ply.yacc as yacc
 
 from symtab import Scope, Symbol, SymbolTable
+from fundef import Fundef
+from llvmcode import *
+from operand import OType, Operand
 
 ## トークン名のリスト
 tokens = (
@@ -94,8 +97,21 @@ def t_error(t):
 # 解析に必要な変数を宣言しておく
 #################################################################
 
-sym_table = SymbolTable()
+symtable = SymbolTable()
 varscope = Scope.GLOBAL_VAR
+
+fundefs = []				# 生成した関数定義（Fundef）のリスト
+
+useWrite = False			# write関数が使用されているかのフラグ
+useRead  = False			# read関数が使用されているかのフラグ
+
+def addCode(l:LLVMCode):
+    ''' 現在の関数定義オブジェクトの codes に命令 l を追加 '''
+    fundefs[-1].codes.append(l)
+
+def getRegister():
+    ''' 新たなレジスタ番号をもつ Operand オブジェクトを返す '''
+    return Operand(OType.NUMBERED_REG, val=fundefs[-1].getNewRegNo())
 
 #################################################################
 # ここから先に構文規則を書く
@@ -105,11 +121,38 @@ def p_program(p):
     '''
     program : PROGRAM IDENT SEMICOLON outblock PERIOD
     '''
+    with open("result.ll", "w") as fout:
+        # 大域変数ごとに common global 命令を出力
+        for t in symtable.rows:
+            if t.scope == Scope.GLOBAL_VAR:
+                print(LLVMCodeGlobal(t.name), file=fout)
+        print('', file=fout)
+
+        # 関数定義を出力
+        for f in fundefs:
+            f.print(fout)
+
+        # printfやscanf関数の宣言と書式を表す文字列定義を出力
+        if useWrite:
+            LLVMCodeCallPrintf.printDeclare(fout)
+            LLVMCodeCallPrintf.printFormat(fout)
+        if useRead:
+            LLVMCodeCallScanf.printDeclare(fout)
+            LLVMCodeCallScanf.printFormat(fout)
 
 def p_outblock(p):
     '''
-    outblock : var_decl_part act_set_varscope_local subprog_decl_part act_set_varscope_global statement
+    outblock : var_decl_part act_set_varscope_local subprog_decl_part outblock_act act_set_varscope_global statement
     '''
+    # 還元時に「ret i32 0」命令を追加
+    addCode(LLVMCodeRet('i32', Operand(OType.CONSTANT, val=0)))
+
+def p_outblock_act(p):
+    '''
+    outblock_act :
+    '''
+    # メイン処理に対する関数定義オブジェクトを生成(名前は main とする）
+    fundefs.append(Fundef('main', 'i32'))
 
 def p_var_decl_part(p):
     '''
@@ -224,11 +267,23 @@ def p_read_statement(p):
     '''
     read_statement : READ LPAREN IDENT act_lookup RPAREN
     '''
+    global useRead
+    useRead = True
+
+    t = p[4] # symtable.lookup(p[3])
+    if t.scope == Scope.GLOBAL_VAR:
+        ptr = Operand(OType.GLOBAL_VAR, name=t.name)
+
+    addCode(LLVMCodeCallScanf(getRegister(), ptr))
 
 def p_write_statement(p):
     '''
     write_statement : WRITE LPAREN expression RPAREN
     '''
+    global useWrite
+    useWrite = True
+    arg = p[3]
+    addCode(LLVMCodeCallPrintf(getRegister(), arg))
 
 def p_null_statement(p):
     '''
@@ -252,6 +307,8 @@ def p_expression(p):
         | expression PLUS term
         | expression MINUS term
     '''
+    if len(p) == 2:
+        p[0] = p[1]
 
 def p_term(p):
     '''
@@ -259,6 +316,15 @@ def p_term(p):
         | term MULT f_actor
         | term DIV f_actor
     '''
+    if len(p) == 2:
+        p[0] = p[1]
+    else:
+        if p[2] == "*":
+            arg1 = p[1]
+            arg2 = p[3]
+            retval = getRegister()
+            addCode(LLVMCodeMul(retval, arg1, arg2))
+            p[0] = retval
 
 def p_f_actor(p):
     '''
@@ -266,16 +332,28 @@ def p_f_actor(p):
         | number
         | LPAREN expression RPAREN
     '''
+    if len(p) == 2:
+        p[0] = p[1]
+    else:
+        p[0] = p[2]
 
 def p_var_name(p):
     '''
     var_name : IDENT act_lookup
     '''
+    t = p[2] # symtable.lookup(p[1])
+    if t.scope == Scope.GLOBAL_VAR:
+        ptr = Operand(OType.GLOBAL_VAR, name=t.name)
+
+    retval = getRegister()
+    addCode(LLVMCodeLoad(retval, ptr))
+    p[0] = retval
 
 def p_number(p):
     '''
     number : NUMBER
     '''
+    p[0] = Operand(OType.CONSTANT, val=int(p[1]))
 
 def p_id_list(p):
     '''
@@ -288,20 +366,21 @@ def p_act_insert_prev_var_ident(p):
     act_insert_prev_var_ident :
     '''
     sym = Symbol(p[-1], varscope)
-    sym_table.insert(sym)
+    symtable.insert(sym)
 
 def p_act_insert_prev_proc_ident(p):
     '''
     act_insert_prev_proc_ident :
     '''
     sym = Symbol(p[-1], Scope.PROC)
-    sym_table.insert(sym)
+    symtable.insert(sym)
 
 def p_act_lookup(p):
     '''
     act_lookup :
     '''
-    sym = sym_table.lookup(p[-1])
+    sym = symtable.lookup(p[-1])
+    p[0] = sym
 
 def p_act_set_varscope_local(p):
     '''
@@ -321,7 +400,7 @@ def p_act_delete_local_ident(p):
     '''
     act_delete_local_ident :
     '''
-    sym_table.delete()
+    symtable.delete()
 
 #################################################################
 # 構文解析エラー時の処理
