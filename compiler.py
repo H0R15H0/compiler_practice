@@ -234,9 +234,8 @@ def p_assignment_statement(p):
 
 def p_if_statement(p):
     '''
-    if_statement : act_generate_labels IF condition act_insert_br THEN act_insert_label statement act_insert_jump act_insert_label else_statement act_insert_jump act_insert_label
+    if_statement : act_generate_labels IF condition act_insert_br THEN act_insert_label1 statement act_insert_jump3 act_insert_label2 else_statement act_insert_jump3 act_insert_label3
     '''
-    labels.pop(-1)
 
 def p_act_generate_labels(p):
     '''
@@ -256,19 +255,52 @@ def p_act_insert_br(p):
     chileLabels = labels[-1]
     addCode(LLVMCodeBr(chileLabels[0], chileLabels[1], p[-1]))
 
-def p_act_insert_label(p):
+def p_act_insert_label1(p):
     '''
-    act_insert_label :
+    act_insert_label1 :
     '''
-    label = labels[-1].pop(0)
+    label = labels[-1][0]
     addCode(LLVMCodeLabel(label))
     p[0] = label
 
-def p_act_insert_jump(p):
+def p_act_insert_label2(p):
     '''
-    act_insert_jump :
+    act_insert_label2 :
     '''
-    label = labels[-1][-1]
+    label = labels[-1][1]
+    addCode(LLVMCodeLabel(label))
+    p[0] = label
+
+def p_act_insert_label3(p):
+    '''
+    act_insert_label3 :
+    '''
+    label = labels[-1][2]
+    addCode(LLVMCodeLabel(label))
+    p[0] = label
+    labels.pop(-1)
+
+def p_act_insert_jump1(p):
+    '''
+    act_insert_jump1 :
+    '''
+    label = labels[-1][0]
+    addCode(LLVMCodeBr(label))
+    p[0] = label
+
+def p_act_insert_jump2(p):
+    '''
+    act_insert_jump2 :
+    '''
+    label = labels[-1][1]
+    addCode(LLVMCodeBr(label))
+    p[0] = label
+
+def p_act_insert_jump3(p):
+    '''
+    act_insert_jump3 :
+    '''
+    label = labels[-1][2]
     addCode(LLVMCodeBr(label))
     p[0] = label
 
@@ -280,8 +312,15 @@ def p_else_statement(p):
 
 def p_while_statement(p):
     '''
-    while_statement : WHILE condition DO statement
+    while_statement : WHILE act_generate_labels act_insert_jump1 act_insert_label1 condition act_insert_br_while DO act_insert_label2 statement act_insert_jump1 act_insert_label3
     '''
+
+def p_act_insert_br_while(p):
+    '''
+    act_insert_br_while :
+    '''
+    chileLabels = labels[-1]
+    addCode(LLVMCodeBr(chileLabels[1], chileLabels[2], p[-1]))
 
 def p_for_statement(p):
     '''
