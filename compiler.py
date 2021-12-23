@@ -228,9 +228,15 @@ def p_statement(p):
 
 def p_assignment_statement(p):
     '''
-    assignment_statement : IDENT act_lookup_prev_ident ASSIGN expression
+    assignment_statement : IDENT act_lookup_prev_ident ASSIGN expression act_assign_ident
     '''
-    addCode(LLVMCodeStore(p[4], p[2]))
+
+def p_act_assign_ident(p):
+    '''
+    act_assign_ident : 
+    '''
+    addCode(LLVMCodeStore(p[-1], p[-3]))
+    p[0] = p[-3]
 
 def p_if_statement(p):
     '''
@@ -324,8 +330,33 @@ def p_act_insert_br_while(p):
 
 def p_for_statement(p):
     '''
-    for_statement : FOR IDENT act_lookup_prev_ident ASSIGN expression TO expression DO statement
+    for_statement : FOR act_generate_labels IDENT act_lookup_prev_ident ASSIGN expression act_assign_ident act_insert_jump1 act_insert_label1 TO expression act_insert_br_for act_insert_label2 DO statement act_increment_itr act_insert_jump1 act_insert_label3
     '''
+
+def p_act_insert_br_for(p):
+    '''
+    act_insert_br_for :
+    '''
+    ptr = p[-8]
+    retval1 = getRegister()
+    addCode(LLVMCodeLoad(retval1, ptr))
+    retval2 = getRegister()
+    cmptype = CmpType.getCmpType('<=')
+    addCode(LLVMCodeCmp(retval2, cmptype, retval1, p[-1]))
+    chileLabels = labels[-1]
+    addCode(LLVMCodeBr(chileLabels[1], chileLabels[2], retval2))
+    p[0] = retval1
+
+def p_act_increment_itr(p):
+    '''
+    act_increment_itr :
+    '''
+    retval1 = p[-4]
+    retval2 = getRegister()
+    arg1 = Operand(OType.CONSTANT, val=1)
+    addCode(LLVMCodeAdd(retval2, retval1, arg1))
+    addCode(LLVMCodeStore(retval2, p[-9]))
+
 
 def p_proc_call_statement(p):
     '''
