@@ -213,9 +213,7 @@ def p_act_proc_args_done(p):
     '''
     act_proc_args_done :
     '''
-    print("### p_act_proc_args_done ###")
     fundef = fundefs[-1]
-    print(p[-1])
     fundef.setArgs(p[-1])
     fundefs[-1] = fundef
     global isProcArgs

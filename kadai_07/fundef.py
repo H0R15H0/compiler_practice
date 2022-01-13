@@ -23,7 +23,6 @@ class Fundef(object):
 
     def print(self, fp):
         ''' 関数定義の出力 '''
-        print(self.args)
         if len(self.args) == 0:
             print(f"define {self.rettype} @{self.name}() {{", file=fp)
         else:
