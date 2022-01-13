@@ -9,6 +9,7 @@ class Scope(Enum):
     GLOBAL_VAR = 0    # 大域変数
     LOCAL_VAR  = 1    # 局所変数
     PROC       = 2    # 手続き
+    PARAM      = 3    # 仮引数
 
 
 class Symbol(object):
@@ -56,7 +57,7 @@ class SymbolTable(object):
     def delete(self):
         ''' 記号表から局所変数の削除 '''
         print("-- delete --")
-        self.rows = [symbol for symbol in self.rows if symbol.scope != Scope(1)]
+        self.rows = [symbol for symbol in self.rows if symbol.scope != Scope.LOCAL_VAR and symbol.scope != Scope.PARAM]
         print(self.rows)
 
 

@@ -107,8 +107,6 @@ useRead  = False			# read関数が使用されているかのフラグ
 
 labelNum = 1                # ラベルの番号
 
-isProcArgs = False
-
 labels = []                 # ラベルの配列
 
 def addCode(l:LLVMCode):
@@ -206,27 +204,18 @@ def p_act_proc_args_set(p):
     '''
     act_proc_args_set :
     '''
-    global isProcArgs
-    isProcArgs = True
+    global varscope
+    varscope = Scope.PARAM
 
 def p_act_proc_args_done(p):
     '''
     act_proc_args_done :
     '''
-    print("### p_act_proc_args_done ###")
     fundef = fundefs[-1]
-    print(p[-1])
     fundef.setArgs(p[-1])
     fundefs[-1] = fundef
-    global isProcArgs
-    isProcArgs = False
-
-# def p_proc_act(p):
-#     '''
-#     proc_act : 
-#     '''
-#     # 手続きに対する関数定義オブジェクトを生成
-#     fundefs.append(Fundef(p[-1]))
+    global varscope
+    varscope = Scope.LOCAL_VAR
 
 def p_proc_name(p):
     '''
@@ -559,7 +548,7 @@ def p_act_insert_prev_var_ident(p):
     sym = Symbol(p[-1], varscope)
     symtable.insert(sym)
     op = Operand(OType.NAMED_REG, name=sym.name)
-    if varscope == Scope.LOCAL_VAR and not isProcArgs:
+    if varscope == Scope.LOCAL_VAR:
         addCode(LLVMCodeAlloca(op))
     p[0] = op
 
@@ -577,7 +566,7 @@ def p_act_lookup_prev_ident(p):
     t = symtable.lookup(p[-1])
     if t.scope == Scope.GLOBAL_VAR or t.scope == Scope.PROC:
         ptr = Operand(OType.GLOBAL_VAR, name=t.name)
-    elif t.scope == Scope.LOCAL_VAR:
+    elif t.scope == Scope.LOCAL_VAR or t.scope == Scope.PARAM:
         ptr = Operand(OType.NAMED_REG, name=t.name)
     p[0] = ptr
 
