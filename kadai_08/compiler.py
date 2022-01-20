@@ -203,7 +203,7 @@ def p_proc_decl(p):
 
 def p_func_decl(p):
     '''
-    func_decl : FUNCTION func_name SEMICOLON inblock
+    func_decl : FUNCTION func_name LPAREN RPAREN SEMICOLON inblock
         | FUNCTION func_name LPAREN act_proc_args_set id_list act_proc_args_done RPAREN SEMICOLON inblock
     '''
     # 戻り値のロード
@@ -536,10 +536,11 @@ def p_factor(p):
 
 def p_func_call(p):
     '''
-    func_call : func_call_name LPAREN arg_list RPAREN
+    func_call : func_call_name LPAREN RPAREN
+        | func_call_name LPAREN arg_list RPAREN
     '''
     retval = getRegister()
-    if len(p) == 2:
+    if len(p) == 4:
         addCode(LLVMCodeCall('i32', p[1], [], retval))
     else:
         addCode(LLVMCodeCall('i32', p[1], p[3], retval))
