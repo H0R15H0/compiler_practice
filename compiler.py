@@ -190,6 +190,7 @@ def p_subprog_decl_list(p):
 def p_subprog_decl(p):
     '''
     subprog_decl : proc_decl
+        | func_decl
     '''
 
 def p_proc_decl(p):
@@ -199,6 +200,18 @@ def p_proc_decl(p):
     '''
     # 還元時に「ret void」命令を追加
     addCode(LLVMCodeRet('void'))
+
+def p_func_decl(p):
+    '''
+    func_decl : FUNCTION func_name SEMICOLON inblock
+        | FUNCTION func_name LPAREN act_proc_args_set id_list act_proc_args_done RPAREN SEMICOLON inblock
+    '''
+    # 戻り値のロード
+    retval = getRegister()
+    addCode(LLVMCodeLoad(retval, p[2]))
+        
+    # 還元時に「ret {type} {val}」命令を追加
+    addCode(LLVMCodeRet('i32', retval))
 
 def p_act_proc_args_set(p):
     '''
@@ -224,6 +237,16 @@ def p_proc_name(p):
     # 手続きに対する関数定義オブジェクトを生成
     fundefs.append(Fundef(p[1]))
     p[0] = p[1]
+
+def p_func_name(p):
+    '''
+    func_name : IDENT act_insert_prev_func_ident act_lookup_prev_ident
+    '''
+    # 手続きに対する関数定義オブジェクトを生成
+    fundefs.append(Fundef(p[1], 'i32'))
+    # 戻り値の領域確保命令の生成
+    addCode(LLVMCodeAlloca(p[3]))
+    p[0] = p[3]
 
 def p_inblock(p):
     '''
@@ -504,11 +527,29 @@ def p_factor(p):
     factor : var_name
         | number
         | LPAREN expression RPAREN
+        | func_call
     '''
     if len(p) == 2:
         p[0] = p[1]
     else:
         p[0] = p[2]
+
+def p_func_call(p):
+    '''
+    func_call : func_call_name LPAREN arg_list RPAREN
+    '''
+    retval = getRegister()
+    if len(p) == 2:
+        addCode(LLVMCodeCall('i32', p[1], [], retval))
+    else:
+        addCode(LLVMCodeCall('i32', p[1], p[3], retval))
+    p[0] = retval
+
+def p_func_call_name(p):
+    '''
+    func_call_name : IDENT act_lookup_prev_ident
+    '''
+    p[0] = p[2]
 
 def p_var_name(p):
     '''
@@ -558,6 +599,16 @@ def p_act_insert_prev_proc_ident(p):
     '''
     sym = Symbol(p[-1], Scope.PROC)
     symtable.insert(sym)
+
+def p_act_insert_prev_func_ident(p):
+    '''
+    act_insert_prev_func_ident :
+    '''
+    sym = Symbol(p[-1], Scope.PROC)
+    symtable.insert(sym)
+    symRetval = Symbol(p[-1], Scope.LOCAL_VAR)
+    symtable.insert(symRetval)
+    p[0] = p[-1]
 
 def p_act_lookup_prev_ident(p):
     '''

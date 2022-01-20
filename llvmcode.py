@@ -207,28 +207,29 @@ class LLVMCodeRet(LLVMCode):
         self.val = val
 
     def __str__(self):
-        if self.type == 'i32':
-            return f"ret i32 {self.val}"
-        else:
+        if self.type == 'void':
             return "ret void"
+        else:
+            return f"ret {self.type} {self.val}"
 
 class LLVMCodeCall(LLVMCode):
     ''' call命令
             call {type} {proc}
+            call {type}
     '''
     
-    def __init__(self, type:str, proc:Operand, args:list=[]):
+    def __init__(self, type:str, proc:Operand, args:list=[], retval=None):
         super().__init__()
         self.type = type
         self.proc = proc
         self.args = args
+        self.retval = retval
 
     def __str__(self):
-        # print(self.args)
-        if len(self.args) == 0:
-            return f"call {self.type} {self.proc}()"
-        else:
-            return f"call {self.type} {self.proc}({', '.join([f'i32 {arg}' for arg in self.args])})"
+        r = f"call {self.type} @{self.proc.name}({', '.join([f'i32 {arg}' for arg in self.args])})"
+        if self.type != 'void':
+            r = f"{self.retval} = " + r
+        return r
 
 
 class LLVMCodeCallPrintf(LLVMCode):

@@ -8,7 +8,7 @@ class Scope(Enum):
     '''
     GLOBAL_VAR = 0    # 大域変数
     LOCAL_VAR  = 1    # 局所変数
-    PROC       = 2    # 手続き
+    PROC       = 2    # 手続き 及び 関数
     PARAM      = 3    # 仮引数
 
 
