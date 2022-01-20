@@ -479,9 +479,9 @@ def p_expression(p):
 
 def p_term(p):
     '''
-    term : f_actor
-        | term MULT f_actor
-        | term DIV f_actor
+    term : factor
+        | term MULT factor
+        | term DIV factor
     '''
     if len(p) == 2:
         p[0] = p[1]
@@ -499,9 +499,9 @@ def p_term(p):
             addCode(LLVMCodeDiv(retval, arg1, arg2))
             p[0] = retval
 
-def p_f_actor(p):
+def p_factor(p):
     '''
-    f_actor : var_name
+    factor : var_name
         | number
         | LPAREN expression RPAREN
     '''
