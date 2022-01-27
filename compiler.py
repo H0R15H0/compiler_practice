@@ -196,7 +196,7 @@ def p_subprog_decl(p):
 def p_proc_decl(p):
     '''
     proc_decl : PROCEDURE proc_name SEMICOLON inblock
-        | PROCEDURE proc_name LPAREN act_proc_args_set id_list act_proc_args_done RPAREN SEMICOLON inblock
+        | PROCEDURE proc_name LPAREN act_proc_args_set callee_arg_list act_proc_args_done RPAREN SEMICOLON inblock
     '''
     # 還元時に「ret void」命令を追加
     addCode(LLVMCodeRet('void'))
@@ -204,7 +204,7 @@ def p_proc_decl(p):
 def p_func_decl(p):
     '''
     func_decl : FUNCTION func_name LPAREN RPAREN SEMICOLON inblock
-        | FUNCTION func_name LPAREN act_proc_args_set id_list act_proc_args_done RPAREN SEMICOLON inblock
+        | FUNCTION func_name LPAREN act_proc_args_set callee_arg_list act_proc_args_done RPAREN SEMICOLON inblock
     '''
     # 戻り値のロード
     retval = getRegister()
@@ -212,6 +212,17 @@ def p_func_decl(p):
         
     # 還元時に「ret {type} {val}」命令を追加
     addCode(LLVMCodeRet('i32', retval))
+
+def p_callee_arg_list(p):
+    '''
+    callee_arg_list : IDENT act_insert_prev_var_ident
+        | callee_arg_list COMMA IDENT act_insert_prev_var_ident
+    '''
+    if len(p) == 3:
+        p[0] = [p[2]]
+    elif len(p) == 5:
+        p[1].append(p[4])
+        p[0] = p[1]
 
 def p_act_proc_args_set(p):
     '''
@@ -340,13 +351,13 @@ def p_act_insert_jump1(p):
     addCode(LLVMCodeBr(label))
     p[0] = label
 
-def p_act_insert_jump2(p):
-    '''
-    act_insert_jump2 :
-    '''
-    label = labels[-1][1]
-    addCode(LLVMCodeBr(label))
-    p[0] = label
+# def p_act_insert_jump2(p):
+#     '''
+#     act_insert_jump2 :
+#     '''
+#     label = labels[-1][1]
+#     addCode(LLVMCodeBr(label))
+#     p[0] = label
 
 def p_act_insert_jump3(p):
     '''
@@ -407,7 +418,7 @@ def p_act_increment_itr(p):
 def p_proc_call_statement(p):
     '''
     proc_call_statement : proc_call_name
-        | proc_call_name LPAREN arg_list RPAREN
+        | proc_call_name LPAREN caller_arg_list RPAREN
     '''
     if len(p) == 2:
         addCode(LLVMCodeCall('void', p[1]))
@@ -420,10 +431,10 @@ def p_proc_call_name(p):
     '''
     p[0] = p[2]
 
-def p_arg_list(p):
+def p_caller_arg_list(p):
     '''
-    arg_list : expression
-        | arg_list COMMA expression
+    caller_arg_list : expression
+        | caller_arg_list COMMA expression
     '''
     if len(p) == 2:
         p[0] = [p[1]]
@@ -537,7 +548,7 @@ def p_factor(p):
 def p_func_call(p):
     '''
     func_call : func_call_name LPAREN RPAREN
-        | func_call_name LPAREN arg_list RPAREN
+        | func_call_name LPAREN caller_arg_list RPAREN
     '''
     retval = getRegister()
     if len(p) == 4:
