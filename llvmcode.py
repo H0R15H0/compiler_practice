@@ -51,6 +51,19 @@ class LLVMCodeGlobal(LLVMCode):
     def __str__(self):
         return f"@{self.name} = common global i32 0, align 4"
 
+class LLVMCodeGlobalArray(LLVMCode):
+    ''' global 命令
+            @{name} = common global [{size} x i32] zeroinitializer, align 16
+    '''
+
+    def __init__(self, name:str, size:int):
+        super().__init__()
+        self.name  = name
+        self.size = size
+
+    def __str__(self):
+        return f"@{self.name} = common global [{self.size} x i32] zeroinitializer, align 16"
+
 
 class LLVMCodeStore(LLVMCode):
     ''' store 命令
@@ -230,6 +243,38 @@ class LLVMCodeCall(LLVMCode):
         if self.type != 'void':
             r = f"{self.retval} = " + r
         return r
+
+
+class LLVMCodeSext(LLVMCode):
+    ''' sext 命令
+            {retval} = sext {type1} {base} to {type2}
+    '''
+
+    def __init__(self, retval:Operand, base:Operand, type1:str, type2:str):
+        super().__init__()
+        self.retval = retval
+        self.base = base
+        self.type1 = type1
+        self.type2 = type2
+
+    def __str__(self):
+        return f"{self.retval} = sext {self.type1} {self.base} to {self.type2}"
+
+
+class LLVMCodeGetelementptr(LLVMCode):
+    ''' getelementptr 命令
+            {retval} = getelementptr inbounds [{size} x i32], [{size} x i32]* {array}, i64 0, i64 {index}
+    '''
+
+    def __init__(self, retval:Operand, array:Operand, size:str, index:Operand):
+        super().__init__()
+        self.retval = retval
+        self.array = array
+        self.size = size
+        self.index = index
+
+    def __str__(self):
+        return f"{self.retval} = getelementptr inbounds [{self.size} x i32], [{self.size} x i32]* {self.array}, i64 0, i64 {self.index}"
 
 
 class LLVMCodeCallPrintf(LLVMCode):

@@ -17,12 +17,14 @@ class Symbol(object):
             記号（変数，手続き）の情報を表現
     '''
 
-    def __init__(self, name:str, scope:Scope):
+    def __init__(self, name:str, scope:Scope, begin:int=None, end:int=None):
         self.name = name     # 名前 : str
         self.scope = scope   # スコープ : Scope
+        self.begin = begin   # 配列の始まり : int
+        self.end = end       # 配列の終わり : int
 
     def __str__(self):
-        return f"({self.name},{self.scope})"
+        return f"({self.name},{self.scope}{','.join([str(i) for i in ['', self.begin, self.end] if i != None])})"
 
     def __repr__(self):
         return str(self)

@@ -129,7 +129,12 @@ def p_program(p):
         # 大域変数ごとに common global 命令を出力
         for t in symtable.rows:
             if t.scope == Scope.GLOBAL_VAR:
-                print(LLVMCodeGlobal(t.name), file=fout)
+                # 配列の場合と条件を分ける
+                if t.begin != None:
+                    size = t.end - t.begin + 1
+                    print(LLVMCodeGlobalArray(t.name, size), file=fout)
+                else:
+                    print(LLVMCodeGlobal(t.name), file=fout)
         print('', file=fout)
 
         # 関数定義を出力
@@ -286,7 +291,20 @@ def p_statement(p):
 def p_assignment_statement(p):
     '''
     assignment_statement : IDENT act_lookup_prev_ident ASSIGN expression act_assign_ident
+        | IDENT act_lookup_prev_ident LBRACKET expression RBRACKET ASSIGN expression
     '''
+    if len(p) == 8:
+        ptr = p[2]
+        t = symtable.lookup(ptr.name)
+        # 相対位置を求める
+        reg1 = getRegister()
+        addCode(LLVMCodeSub(reg1, p[4], Operand(OType.CONSTANT, val=t.begin)))
+        reg2 = getRegister()
+        addCode(LLVMCodeSext(reg2, reg1, 'i32', 'i64'))
+        reg3 = getRegister()
+        size = t.end - t.begin + 1
+        addCode(LLVMCodeGetelementptr(reg3, ptr, str(size), reg2))
+        addCode(LLVMCodeStore(p[7], reg3))
 
 def p_act_assign_ident(p):
     '''
@@ -449,12 +467,12 @@ def p_block_statement(p):
 
 def p_read_statement(p):
     '''
-    read_statement : READ LPAREN IDENT act_lookup_prev_ident RPAREN
+    read_statement : READ LPAREN var_name_addr RPAREN
     '''
     global useRead
     useRead = True
 
-    ptr = p[4]
+    ptr = p[3]
 
     addCode(LLVMCodeCallScanf(getRegister(), ptr))
 
@@ -565,17 +583,39 @@ def p_func_call_name(p):
 
 def p_var_name(p):
     '''
-    var_name : IDENT act_lookup_prev_ident
+    var_name : var_name_addr
+    '''
+    addrOp = p[1]
+
+    args = fundefs[-1].args
+    if addrOp.name in [op.name for op in args]:
+        retval = addrOp
+    else:
+        retval = getRegister()
+        addCode(LLVMCodeLoad(retval, addrOp))
+    p[0] = retval
+
+def p_var_name_addr(p):
+    '''
+    var_name_addr : IDENT act_lookup_prev_ident
+        | IDENT act_lookup_prev_ident LBRACKET expression RBRACKET
     '''
     ptr = p[2]
 
-    args = fundefs[-1].args
-    if ptr.name in [op.name for op in args]:
-        p[0] = ptr
-    else:
+    if len(p) == 3:
+        retval = ptr
+    elif len(p) == 6: # 配列の場合
+        t = symtable.lookup(ptr.name)
+        # 相対位置を求める
+        reg1 = getRegister()
+        addCode(LLVMCodeSub(reg1, p[4], Operand(OType.CONSTANT, val=t.begin)))
+        reg2 = getRegister()
+        addCode(LLVMCodeSext(reg2, reg1, 'i32', 'i64'))
         retval = getRegister()
-        addCode(LLVMCodeLoad(retval, ptr))
-        p[0] = retval
+        size = t.end - t.begin + 1
+        addCode(LLVMCodeGetelementptr(retval, ptr, str(size), reg2))
+    p[0] = retval
+
 
 def p_number(p):
     '''
@@ -586,12 +626,19 @@ def p_number(p):
 def p_id_list(p):
     '''
     id_list : IDENT act_insert_prev_var_ident
+        | IDENT LBRACKET number INTERVAL number RBRACKET act_insert_array_var_ident
         | id_list COMMA IDENT act_insert_prev_var_ident
+        | id_list COMMA IDENT LBRACKET number INTERVAL number RBRACKET act_insert_array_var_ident
     '''
     if len(p) == 3:
         p[0] = [p[2]]
+    elif len(p) == 8:
+        p[0] = [p[7]]
     elif len(p) == 5:
         p[1].append(p[4])
+        p[0] = p[1]
+    elif len(p) == 9:
+        p[1].append(p[8])
         p[0] = p[1]
 
 def p_act_insert_prev_var_ident(p):
@@ -621,6 +668,17 @@ def p_act_insert_prev_func_ident(p):
     symRetval = Symbol(p[-1], Scope.LOCAL_VAR)
     symtable.insert(symRetval)
     p[0] = p[-1]
+
+def p_act_insert_array_var_ident(p):
+    '''
+    act_insert_array_var_ident :
+    '''
+    begin = p[-4].val
+    end = p[-2].val
+    sym = Symbol(p[-6], varscope, begin, end)
+    symtable.insert(sym)
+    op = Operand(OType.NAMED_REG, name=sym.name)
+    p[0] = op
 
 def p_act_lookup_prev_ident(p):
     '''
@@ -663,6 +721,7 @@ def p_error(p):
         print(f"Syntax error: invalid syntax {p.value} type {p.type} at line {p.lineno}")
     else:
         print("Syntax error at EOF")
+    exit()
 
 #################################################################
 # メインの処理
